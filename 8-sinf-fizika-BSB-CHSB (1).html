@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>8-sinf Fizika · BSB va CHSB</title>
+<style>
+:root{--bg:#e9eef4;--paper:#fff;--ink:#14202b;--muted:#51606e;--line:#c9d3de;--blue:#1d4ed8;--blue-d:#173ea8;--key:#0f766e;--keybg:#e7f5f3}
+*{box-sizing:border-box}
+html{scroll-padding-top:120px}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+.bar{position:sticky;top:0;z-index:5;background:#102a54;color:#fff;padding:10px 16px 8px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.brand{font:700 19px Georgia,"Times New Roman",serif;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand small{font:400 14px "Segoe UI",system-ui,sans-serif;color:#b9c8e6}
+nav{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:thin}
+nav button{flex:none;border:1px solid #3b5a99;background:transparent;color:#dbe5fb;border-radius:999px;padding:6px 14px;font:inherit;font-size:15px;cursor:pointer}
+nav button.sep{margin-left:10px}
+nav button[aria-current=true]{background:#fff;color:#102a54;border-color:#fff;font-weight:600}
+nav button:focus-visible,.tools button:focus-visible{outline:3px solid #ffd166;outline-offset:2px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;padding-top:4px}
+.tools button{border:0;background:#ffd166;color:#102a54;border-radius:8px;padding:7px 14px;font-weight:600;font-size:15px;font-family:inherit;cursor:pointer}
+.tools button[aria-pressed=true]{background:#2dd4bf}
+main{max-width:860px;margin:18px auto 48px;padding:0 12px}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:34px 38px 40px;box-shadow:0 6px 24px rgba(16,42,84,.10)}
+.fields{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px 18px;font-size:15px;color:var(--muted);margin-bottom:22px}
+.fields span{border-bottom:1px solid var(--ink);padding-bottom:2px;min-height:24px}
+.fields .w{grid-column:1/-1}
+h1{font:700 29px/1.2 Georgia,"Times New Roman",serif;margin:0 0 6px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 22px;color:var(--muted);font-size:15px;margin-bottom:6px}
+.meta b{color:var(--ink)}
+.scope{margin:10px 0 24px;padding:10px 14px;border-left:4px solid var(--blue);background:#f1f5fd;font-size:15.5px}
+h2{font:700 20px Georgia,serif;margin:30px 0 12px;color:var(--blue-d);display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:6px}
+h2 span{font:500 14.5px "Segoe UI",sans-serif;color:var(--muted);white-space:nowrap}
+.task{margin:0 0 18px;display:grid;grid-template-columns:34px 1fr;column-gap:6px;break-inside:avoid}
+.num{font-weight:700;color:var(--blue-d)}
+.q{margin:0}
+.opts{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:3px 22px}
+.opts li{font-size:16px}
+.opts b{display:inline-block;width:22px}
+.ans{display:none;margin:8px 0 0;padding:8px 12px;border-radius:6px;background:var(--keybg);color:var(--key);font-size:15.5px;border:1px solid #b9e0db}
+.ans b{color:#0b5b54}
+body.key .ans{display:block}
+.space{height:54px;border-bottom:1px dotted var(--line)}
+body.key .space{display:none}
+.foot{margin-top:28px;padding-top:12px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;font-weight:600;gap:12px;flex-wrap:wrap}
+.note{max-width:860px;margin:0 auto;padding:0 14px;color:var(--muted);font-size:14px}
+@media (max-width:640px){.sheet{padding:22px 16px 28px}.fields{grid-template-columns:1fr}.opts{grid-template-columns:1fr}h1{font-size:24px}}
+@media print{
+ body{background:#fff;font-size:12.5pt}
+ .bar,.note{display:none}
+ main{margin:0;max-width:none;padding:0}
+ .sheet{border:0;box-shadow:none;padding:0}
+ .scope{background:none}
+ .ans{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+ <div class="brand">8-sinf Fizika <small>BSB va CHSB topshiriqlari · darslikning 60 ta §, 5 ta bobi bo‘yicha</small></div>
+ <nav id="nav" aria-label="Nazorat ishlari"></nav>
+ <div class="tools">
+  <button id="keyBtn" aria-pressed="false">Javoblar kaliti</button>
+  <button id="printBtn">Chop etish</button>
+ </div>
+</header>
+<main><article id="sheet" class="sheet"></article></main>
+<p class="note">CHSB qamrovi §-lar soni bo‘yicha teng (15 tadan) taqsimlangan. Chorak rejangiz boshqacha bo‘lsa, “Qamrov” qatorini o‘zingizga moslab tahrirlang.</p>
+
+<script>
+var L="ABCD";
+var BSB_PT={t:1,s:2,c:5}, CHSB_PT={t:1,s:3,c:4,h:8};
+var D=[
+/* ============ BSB ============ */
+{id:"bsb1",nav:"1-BSB",kind:"BSB",title:"1-BSB. Elektr zaryad. Elektr maydon",scope:"I bob, 1–8-§: jismlarning zaryadlanishi, elektr zaryad, Kulon qonuni, elektr maydon, o‘tkazgichlarda zaryadlarning taqsimlanishi, tabiatdagi elektr hodisalar",time:"20 daqiqa",pt:BSB_PT,tasks:[
+["t","Shisha tayoqchani ipakka ishqalaganda tayoqcha qanday zaryadlanadi?",["Manfiy","Musbat","Zaryadlanmaydi","Avval musbat, keyin manfiy"],1],
+["t","Elementar zaryad (elektron zaryadining moduli) qaysi javobda to‘g‘ri berilgan?",["1,6·10⁻¹⁹ C","1,6·10⁻⁹ C","9·10⁹ C","6,02·10²³ C"],0],
+["t","Ikki nuqtaviy zaryad orasidagi masofa 2 marta oshirilsa, ularning o‘zaro ta’sir kuchi qanday o‘zgaradi?",["2 marta ortadi","2 marta kamayadi","4 marta kamayadi","4 marta ortadi"],2],
+["t","Elektr maydon kuchlanganligi qaysi formula bilan aniqlanadi?",["E = q/F","E = F/q","E = F·q","E = k·q"],1],
+["t","Zaryadlangan o‘tkazgichdagi ortiqcha zaryadlar qayerda joylashadi?",["Butun hajm bo‘ylab tekis","Faqat markazida","Tashqi sirtida","Ichki bo‘shlig‘ida"],2],
+["t","Neytral atom 2 ta elektronini yo‘qotdi. U qanday ionga aylanadi?",["Musbat ion","Manfiy ion","Neytral qoladi","Aniqlab bo‘lmaydi"],0],
+["s","Kulon qonunini ta’riflang va formulasini yozing.","Vakuumda ikki nuqtaviy zaryad orasidagi o‘zaro ta’sir kuchi zaryadlar modullarining ko‘paytmasiga to‘g‘ri, ular orasidagi masofa kvadratiga teskari proporsional: <b>F = k·|q₁q₂|/r²</b>, k = 9·10⁹ N·m²/C²."],
+["s","Chaqmoq qanday hosil bo‘ladi va yashinqaytargich nima vazifa bajaradi?","Bulutlar zaryadlanib, bulutlar orasida yoki bulut bilan yer orasida kuchli elektr razryadi (uchqun) sodir bo‘ladi. Yashinqaytargich zaryadni xavfsiz tarzda yerga o‘tkazib, binoni shikastlanishdan saqlaydi."],
+["c","Zaryadlari 4·10⁻⁸ C va 6·10⁻⁸ C bo‘lgan ikkita nuqtaviy zaryad vakuumda bir-biridan 3 cm masofada turibdi. Ularning o‘zaro ta’sir kuchini toping.","<b>Berilgan:</b> q₁ = 4·10⁻⁸ C, q₂ = 6·10⁻⁸ C, r = 0,03 m.<br><b>Yechim:</b> F = k·q₁q₂/r² = 9·10⁹ · 4·10⁻⁸ · 6·10⁻⁸ / (9·10⁻⁴) = <b>2,4·10⁻² N</b> (itarishadi)."],
+["c","Maydonning biror nuqtasiga kiritilgan 2·10⁻⁹ C zaryadga 6·10⁻⁶ N kuch ta’sir qiladi. Shu nuqtadagi maydon kuchlanganligini toping.","E = F/q = 6·10⁻⁶ / 2·10⁻⁹ = <b>3·10³ N/C</b>."]
+]},
+{id:"bsb2",nav:"2-BSB",kind:"BSB",title:"2-BSB. Elektr toki",scope:"II bob, 9–29-§: elektr toki, tok manbalari, kuchlanish, tok kuchi, elektr qarshilik, Om qonuni, iste’molchilarni ulash, kondensatorlar",time:"20 daqiqa",pt:BSB_PT,tasks:[
+["t","Elektr toki nima?",["Zarralarning tartibsiz harakati","Zaryadlangan zarralarning tartibli (yo‘nalgan) harakati","Atomlarning tebranishi","Neytronlar oqimi"],1],
+["t","Ampermetr zanjirga qanday ulanadi?",["Parallel","Ketma-ket","Aralash","Faqat tok manbaiga"],1],
+["t","Zanjir qismi uchun Om qonuni qaysi javobda to‘g‘ri yozilgan?",["I = U·R","I = R/U","I = U/R","I = U²/R"],2],
+["t","R₁ va R₂ rezistorlar ketma-ket ulanganda umumiy qarshilik qanday topiladi?",["R = R₁ + R₂","R = R₁·R₂","1/R = R₁ + R₂","R = R₁ − R₂"],0],
+["t","Parallel ulangan iste’molchilarda qaysi kattalik hammasida bir xil bo‘ladi?",["Tok kuchi","Kuchlanish","Qarshilik","Quvvat"],1],
+["t","Elektr sig‘imining birligi qaysi?",["Om","Volt","Farad","Amper"],2],
+["s","Metall o‘tkazgichning qarshiligi nimalarga bog‘liq? Formulasini yozing.","Uzunligiga (to‘g‘ri proporsional), ko‘ndalang kesim yuziga (teskari proporsional) va modda turiga (solishtirma qarshilik ρ): <b>R = ρ·l/S</b>."],
+["s","Reostatning vazifasi va ishlash prinsipini tushuntiring.","Reostat zanjirdagi qarshilikni silliq o‘zgartirib, tok kuchini rostlaydi. Sim o‘ramlarining zanjirga ulangan uzunligi surgich yordamida o‘zgartiriladi, shuning uchun qarshilik ham o‘zgaradi."],
+["c","R₁ = 10 Ω va R₂ = 15 Ω rezistorlar parallel ulangan, tarmoq kuchlanishi 30 V. Umumiy qarshilik va umumiy tok kuchini toping.","R = R₁R₂/(R₁+R₂) = 150/25 = <b>6 Ω</b>.<br>I = U/R = 30/6 = <b>5 A</b>."],
+["c","4 Ω va 8 Ω li iste’molchilar ketma-ket ulangan, zanjirdan 2 A tok o‘tmoqda. Umumiy kuchlanish va har bir iste’molchidagi kuchlanishni toping.","R = 4 + 8 = 12 Ω; U = I·R = 2·12 = <b>24 V</b>.<br>U₁ = 2·4 = <b>8 V</b>, U₂ = 2·8 = <b>16 V</b> (8 + 16 = 24 V)."]
+]},
+{id:"bsb3",nav:"3-BSB",kind:"BSB",title:"3-BSB. Elektr tokining ishi va quvvati",scope:"III bob, 30–39-§: tok ishi va quvvati, Joul–Lens qonuni, xonadonlardagi elektr zanjirlar, elektr xavfsizlik choralari",time:"20 daqiqa",pt:BSB_PT,tasks:[
+["t","Elektr tokining ishi qaysi formula bilan topiladi?",["A = U·I·t","A = I/(U·t)","A = U/(I·t)","A = I²/R"],0],
+["t","Elektr quvvatining birligi qaysi?",["Joul","Vatt","Kulon","Amper"],1],
+["t","Joul–Lens qonuni formulasi qaysi javobda berilgan?",["Q = I·R·t","Q = I²·R·t","Q = U/(R·t)","Q = I/R²"],1],
+["t","220 V tarmoqqa ulangan 100 W lampadan o‘tadigan tok kuchi taxminan qancha?",["2,2 A","22 A","0,22 A","0,45 A"],3],
+["t","Xonadonda iste’molchilar tarmoqqa qanday ulanadi?",["Ketma-ket","Parallel","Faqat aralash","Hech qanday tartibda emas"],1],
+["t","Qisqa tutashuv nimaga xavfli?",["Tok kuchi keskin ortib, simlar qizib yong‘in chiqarishi mumkin","Tok kuchi nolga tushadi","Kuchlanish ikki barobar ortadi","Hech qanday xavf yo‘q"],0],
+["s","Saqlagich (predoxranitel) nima uchun kerak va qanday ishlaydi?","Zanjirni ortiqcha tokdan himoya qiladi. Tok ruxsat etilgandan oshsa, saqlagich ichidagi yupqa sim erib ketadi va zanjir uziladi."],
+["s","Elektr xavfsizligining kamida uch qoidasini yozing.","Masalan: ochiq simlarga tegmaslik; nam qo‘l bilan elektr asboblariga tegmaslik; shikastlangan simli asboblardan foydalanmaslik; asbobni o‘chirmasdan ta’mirlamaslik; bir rozetkaga ko‘p quvvatli asbob ulamaslik; tokka tushgan odamni quruq yog‘och yoki dielektrik bilan ajratish."],
+["c","Qarshiligi 50 Ω bo‘lgan spiraldan 4 A tok 10 minut davomida o‘tdi. Ajralgan issiqlik miqdorini toping.","Q = I²Rt = 4²·50·600 = <b>480 000 J = 480 kJ</b>."],
+["c","1500 W li choynak 220 V tarmoqda 5 minut ishladi. Tok kuchi, bajarilgan ish va sarflangan energiyani (kW·soat) toping.","I = P/U = 1500/220 ≈ <b>6,8 A</b>.<br>A = P·t = 1500·300 = <b>450 000 J = 450 kJ</b>.<br>E = 1,5 kW · (5/60) soat = <b>0,125 kW·soat</b>."]
+]},
+{id:"bsb4",nav:"4-BSB",kind:"BSB",title:"4-BSB. Turli muhitlarda elektr toki",scope:"IV bob, 40–48-§: metallarda, suyuqliklarda, vakuumda va gazlarda elektr toki, elektroliz, Faradey qonunlari, elektr razryadlar",time:"20 daqiqa",pt:BSB_PT,tasks:[
+["t","Metallarda elektr tokini qanday zarralar hosil qiladi?",["Musbat ionlar","Manfiy ionlar","Erkin elektronlar","Neytronlar"],2],
+["t","Elektrolit eritmalarida tok tashuvchilar qaysilar?",["Faqat elektronlar","Musbat va manfiy ionlar","Faqat musbat ionlar","Neytral molekulalar"],1],
+["t","Elektroliz nima?",["Metallning erishi","Gazning ionlashishi","Elektrolit orqali tok o‘tganda elektrodlarda modda ajralib chiqishi","Suyuqlikning bug‘lanishi"],2],
+["t","Faradeyning birinchi qonuni formulasi qaysi?",["m = k·I·t","m = I/(k·t)","m = k/(I·t)","m = I·t/k²"],0],
+["t","Vakuumda elektr toki hosil bo‘lishi uchun nima zarur?",["Sovutilgan anod","Qizdirilgan katod (termoelektron emissiya)","Kuchli magnit","Suv bug‘i"],1],
+["t","Chaqmoq gazlardagi razryadning qaysi turiga kiradi?",["Uchqunli razryad","Tojli razryad","Yoysimon razryad","Yaltiroq razryad"],0],
+["s","Elektrolizning texnika va turmushda qo‘llanilishiga ikkita misol keltiring.","Galvanostegiya (buyumni nikel, xrom, oltin kabi metall bilan qoplash), galvanoplastika (nusxa olish), metallarni tozalash (rafinirlash), alyuminiy olish."],
+["s","Faradeyning ikkinchi qonuni mazmunini ayting.","Elektrokimyoviy ekvivalent k moddaning kimyoviy ekvivalentiga (atom massasining valentlikka nisbatiga) to‘g‘ri proporsional: <b>k = (1/F)·(M/n)</b>, F — Faradey doimiysi."],
+["c","Elektroliz vannasidan 2 A tok 30 minut o‘tdi. Mis uchun k = 0,33 mg/C bo‘lsa, katodda ajralgan mis massasini toping.","t = 1800 s; q = It = 3600 C.<br>m = k·I·t = 0,33·3600 = 1188 mg ≈ <b>1,19 g</b>."],
+["c","Buyumga 0,9 g nikel qoplash uchun 3 A tok qancha vaqt o‘tishi kerak? (nikel uchun k = 0,30 mg/C)","t = m/(k·I) = 900 mg / (0,30 mg/C · 3 A) = <b>1000 s ≈ 16,7 min</b>."]
+]},
+{id:"bsb5",nav:"5-BSB",kind:"BSB",title:"5-BSB. Magnit maydon",scope:"V bob, 49–60-§: doimiy magnit, magnit induksiya, Yerning magnit maydoni, tokning magnit maydoni, Amper kuchi, Lorens kuchi, elektromagnitlar, elektr dvigatel",time:"20 daqiqa",pt:BSB_PT,tasks:[
+["t","Magnitlarning bir xil nomli qutblari o‘zaro qanday ta’sirlashadi?",["Tortishadi","Itarishadi","Ta’sirlashmaydi","Avval tortishib, keyin itarishadi"],1],
+["t","Tok atrofida magnit maydon borligini birinchi bo‘lib kim aniqlagan?",["Om","Ersted","Faradey","Kulon"],1],
+["t","Magnit maydonning tokli o‘tkazgichga ta’sir kuchi nima deb ataladi?",["Kulon kuchi","Amper kuchi","Arximed kuchi","Ishqalanish kuchi"],1],
+["t","Elektromagnitning magnit maydonini kuchaytirish uchun nima qilinadi?",["O‘ramlar sonini kamaytirish","Tok kuchini kamaytirish","O‘ramlar soni va tok kuchini oshirish, o‘zak qo‘yish","Simni uzaytirmasdan qoldirish"],2],
+["t","Elektr dvigatelda energiya qanday o‘zgaradi?",["Mexanik → elektr","Elektr → mexanik","Issiqlik → elektr","Yorug‘lik → mexanik"],1],
+["t","Magnit induksiyasining birligi qaysi?",["Tesla","Farad","Om","Joul"],0],
+["s","Magnit induksiya vektori nima? Birligini ayting.","Magnit maydonning kuch ta’sirini xarakterlovchi kattalik: <b>B = F<sub>max</sub>/(I·l)</b>. Birligi — tesla (T)."],
+["s","Lorens kuchining yo‘nalishi qanday aniqlanadi?","Chap qo‘l qoidasi bilan: magnit induksiya chiziqlari kaftga kirsin, to‘rt barmoq musbat zarraning tezligi yo‘nalishini ko‘rsatsin, 90° ochilgan bosh barmoq kuch yo‘nalishini ko‘rsatadi (manfiy zarra uchun teskari)."],
+["c","Induksiyasi 0,4 T bo‘lgan maydonga tik joylashgan, uzunligi 0,5 m bo‘lgan o‘tkazgichdan 6 A tok o‘tmoqda. Amper kuchini toping.","F = B·I·l = 0,4·6·0,5 = <b>1,2 N</b>."],
+["c","Elektron induksiyasi 0,2 T bo‘lgan maydonga tik yo‘nalishda 2·10⁶ m/s tezlik bilan uchmoqda. Unga ta’sir qiluvchi Lorens kuchini toping. (e = 1,6·10⁻¹⁹ C)","F = e·v·B = 1,6·10⁻¹⁹ · 2·10⁶ · 0,2 = <b>6,4·10⁻¹⁴ N</b>."]
+]},
+/* ============ CHSB ============ */
+{id:"chsb1",nav:"1-CHSB",kind:"CHSB",title:"1-CHSB. I chorak",scope:"1–15-§: elektr zaryad, Kulon qonuni, elektr maydon, elektr toki, tok manbalari, kuchlanish, tok kuchi, laboratoriya ishlari",time:"45 daqiqa",pt:CHSB_PT,tasks:[
+["t","Atom 3 ta elektron biriktirib oldi. U qanday zaryadga ega bo‘ladi?",["+3e","−3e","+6e","Zaryadsiz qoladi"],1],
+["t","Zaryadi −5e bo‘lgan tomchi 3 ta elektronini yo‘qotdi. Uning zaryadi qanday bo‘ldi?",["−8e","+8e","−2e","+2e"],2],
+["t","Ikki zaryad orasidagi masofa 3 marta kamaytirilsa, o‘zaro ta’sir kuchi qanday o‘zgaradi?",["3 marta ortadi","9 marta ortadi","3 marta kamayadi","9 marta kamayadi"],1],
+["t","Elektr maydon kuchlanganlik chiziqlari qanday yo‘nalgan?",["Manfiy zaryaddan musbat zaryadga","Musbat zaryaddan manfiy zaryadga yoki cheksizlikka","Faqat aylana shaklida","Doimo parallel"],1],
+["t","Tok manbaining vazifasi nima?",["Zaryadlarni yo‘q qilish","Zanjirda elektr maydonni hosil qilib, uni saqlab turish","Qarshilikni oshirish","Zanjirni uzish"],1],
+["t","Elektr kuchlanishning birligi qaysi?",["Amper","Volt","Om","Vatt"],1],
+["t","Voltmetr zanjirga qanday ulanadi?",["Ketma-ket","Parallel","Faqat manbaga ketma-ket","Ulanmaydi"],1],
+["t","Tok kuchi 2 A bo‘lsa, 10 s davomida o‘tkazgich kesimidan qancha zaryad o‘tadi?",["0,2 C","5 C","12 C","20 C"],3],
+["s","Oddiy elektr zanjir qanday qismlardan iborat? Ularning vazifasini yozing.","Tok manbai (tokni hosil qiladi), iste’molchi (lampa, rezistor — energiyani boshqa turga aylantiradi), kalit (zanjirni ulaydi/uzadi), ulovchi simlar (tokni o‘tkazadi). O‘lchash uchun ampermetr (ketma-ket) va voltmetr (parallel) qo‘shiladi."],
+["s","Tok manbalarining uch turini va ulardagi energiya aylanishini ayting.","Galvanik element/akkumulyator — kimyoviy energiya → elektr; quyosh elementi — yorug‘lik energiyasi → elektr; termoelement — issiqlik energiyasi → elektr (generator — mexanik → elektr)."],
+["c","O‘tkazgich kesimidan 40 s davomida 80 C zaryad o‘tdi. Tok kuchini toping.","I = q/t = 80/40 = <b>2 A</b>."],
+["c","Elektr maydon 8 C zaryadni ko‘chirishda 120 J ish bajardi. Zanjir qismidagi kuchlanishni toping.","U = A/q = 120/8 = <b>15 V</b>."],
+["h","Bir xil ikkita metall sharcha zaryadlari +6·10⁻⁸ C va −2·10⁻⁸ C. Ular bir-biriga tekkizilib, so‘ng 2 cm masofaga uzoqlashtirildi. Tekkizishdan keyingi har bir sharcha zaryadini, ularning o‘zaro ta’sir kuchini va ta’sir turini (itarish/tortish) aniqlang.","Umumiy zaryad: 6·10⁻⁸ − 2·10⁻⁸ = 4·10⁻⁸ C; sharchalar bir xil, shuning uchun zaryad teng bo‘linadi: q = <b>2·10⁻⁸ C</b> (har birida).<br>F = k·q²/r² = 9·10⁹·(2·10⁻⁸)² / (0,02)² = 9·10⁹·4·10⁻¹⁶/4·10⁻⁴ = <b>9·10⁻³ N</b>.<br>Zaryadlar bir ishorali, shuning uchun sharchalar <b>itarishadi</b>."]
+]},
+{id:"chsb2",nav:"2-CHSB",kind:"CHSB",title:"2-CHSB. II chorak",scope:"16–30-§: rezistorlar, reostatlar, Om qonuni, iste’molchilarni ketma-ket, parallel va aralash ulash, kondensatorlar, elektr tokining ishi",time:"45 daqiqa",pt:CHSB_PT,tasks:[
+["t","Simning uzunligi 2 marta oshirilsa (boshqa shartlar o‘zgarmasa), uning qarshiligi qanday o‘zgaradi?",["2 marta kamayadi","2 marta ortadi","4 marta ortadi","O‘zgarmaydi"],1],
+["t","Simning ko‘ndalang kesim yuzi 2 marta oshirilsa, qarshilik qanday o‘zgaradi?",["2 marta ortadi","2 marta kamayadi","4 marta ortadi","O‘zgarmaydi"],1],
+["t","Zanjir qismining qarshiligi 4 Ω, uchlaridagi kuchlanish 12 V. Tok kuchi qancha?",["48 A","8 A","3 A","0,33 A"],2],
+["t","Reostat nima uchun ishlatiladi?",["Kuchlanishni o‘lchash","Zanjirdagi tok kuchini rostlash","Zaryadni saqlash","Tokni hosil qilish"],1],
+["t","Ketma-ket ulangan iste’molchilarda qaysi kattalik bir xil bo‘ladi?",["Kuchlanish","Qarshilik","Tok kuchi","Quvvat"],2],
+["t","6 Ω va 3 Ω li rezistorlar parallel ulanganda umumiy qarshilik qancha?",["9 Ω","4,5 Ω","2 Ω","1 Ω"],2],
+["t","Kondensatorning elektr sig‘imi qanday aniqlanadi?",["C = U/q","C = q/U","C = q·U","C = I/U"],1],
+["t","Elektr tokining ishi qaysi birlikda o‘lchanadi?",["Vatt","Joul","Volt","Farad"],1],
+["s","Zanjir qismi uchun Om qonunini ta’riflang. Tok kuchining kuchlanishga bog‘liqlik grafigi qanday ko‘rinishda bo‘ladi?","Zanjir qismidagi tok kuchi shu qismning uchlaridagi kuchlanishga to‘g‘ri, qarshiligiga teskari proporsional: <b>I = U/R</b>. Grafik koordinata boshidan o‘tuvchi to‘g‘ri chiziq; qarshilik katta bo‘lsa chiziq yotiqroq."],
+["s","Kondensatorlarni parallel va ketma-ket ulaganda umumiy sig‘im formulalarini yozing.","Parallel: <b>C = C₁ + C₂</b> (sig‘im ortadi). Ketma-ket: <b>1/C = 1/C₁ + 1/C₂</b> (sig‘im kamayadi)."],
+["c","Nikromli sim uzunligi 5 m, ko‘ndalang kesimi 0,5 mm², ρ = 1,1 Ω·mm²/m. Sim qarshiligini toping.","R = ρ·l/S = 1,1·5/0,5 = <b>11 Ω</b>."],
+["c","Sig‘imi 2 μF bo‘lgan kondensator 100 V kuchlanishgacha zaryadlandi. Kondensatordagi zaryadni toping.","q = C·U = 2·10⁻⁶·100 = <b>2·10⁻⁴ C = 200 μC</b>."],
+["h","Zanjirda R₁ = 2 Ω rezistor, unga ketma-ket ulangan parallel guruh (R₂ = 3 Ω va R₃ = 6 Ω) bor. Zanjirga 24 V kuchlanish berilgan. Umumiy qarshilik, umumiy tok va R₂, R₃ dagi tok kuchlarini toping.","Parallel guruh: R₂₃ = 3·6/9 = 2 Ω. Umumiy: R = 2 + 2 = <b>4 Ω</b>.<br>I = U/R = 24/4 = <b>6 A</b> (R₁ dan ham shu tok o‘tadi).<br>R₁ dagi kuchlanish 12 V, guruhda ham 12 V qoladi.<br>I₂ = 12/3 = <b>4 A</b>, I₃ = 12/6 = <b>2 A</b> (4 + 2 = 6 A)."]
+]},
+{id:"chsb3",nav:"3-CHSB",kind:"CHSB",title:"3-CHSB. III chorak",scope:"31–45-§: tok quvvati, Joul–Lens qonuni, xonadonlardagi zanjirlar, elektr xavfsizlik, metallarda va suyuqliklarda tok, elektroliz, Faradey qonunlari",time:"45 daqiqa",pt:CHSB_PT,tasks:[
+["t","Elektr tokining quvvati qaysi formula bilan topiladi?",["P = U/I","P = U·I","P = I/U","P = U·t"],1],
+["t","1 kW·soat necha joulga teng?",["1000 J","3600 J","3,6·10⁶ J","6·10⁴ J"],2],
+["t","Tok kuchi 2 marta oshirilsa (R va t o‘zgarmasa), ajraladigan issiqlik miqdori qanday o‘zgaradi?",["2 marta ortadi","4 marta ortadi","2 marta kamayadi","O‘zgarmaydi"],1],
+["t","Qaysi holda qisqa tutashuv ro‘y beradi?",["Zanjirda qarshilik juda katta bo‘lganda","Tok manbai qutblari kichik qarshilikli o‘tkazgich bilan tutashganda","Kalit uzilganda","Lampa kuyib qolganda"],1],
+["t","Saqlagichning asosiy vazifasi nima?",["Tok kuchini oshirish","Kuchlanishni o‘lchash","Zanjirni ortiqcha tokdan himoyalash","Zaryadni saqlash"],2],
+["t","Metallarda elektr tokini hosil qiluvchi zarralar qaysilar?",["Erkin elektronlar","Manfiy ionlar","Musbat ionlar","Protonlar"],0],
+["t","Metall qizdirilganda uning qarshiligi odatda qanday o‘zgaradi?",["Kamayadi","Ortadi","O‘zgarmaydi","Nolga teng bo‘ladi"],1],
+["t","Quyidagilardan qaysi biri elektrolit?",["Distillangan suv","Shakar eritmasi","Osh tuzining suvdagi eritmasi","Sof kerosin"],2],
+["s","Joul–Lens qonunini ta’riflang. Tokning issiqlik ta’siridan foydalanishga va uning zararli tomoniga misol keltiring.","O‘tkazgichdan tok o‘tganda ajraladigan issiqlik miqdori tok kuchi kvadratiga, o‘tkazgich qarshiligiga va vaqtga to‘g‘ri proporsional: <b>Q = I²Rt</b>. Foydali: dazmol, isitgich, cho‘g‘lanma lampa. Zararli: simlarning qizishi, energiya isrofi, yong‘in xavfi."],
+["s","Elektroliz nima? Faradeyning birinchi qonunini ayting.","Elektrolit orqali tok o‘tganda elektrodlarda modda ajralib chiqish hodisasi. Elektrodda ajralgan modda massasi zanjirdan o‘tgan zaryadga to‘g‘ri proporsional: <b>m = k·I·t</b>."],
+["c","220 V ga mo‘ljallangan 40 W li lampadan o‘tadigan tok kuchini va lampa tolasining qarshiligini toping.","I = P/U = 40/220 ≈ <b>0,18 A</b>.<br>R = U²/P = 220²/40 = <b>1210 Ω</b>."],
+["c","1,5 kW li isitgich kuniga 4 soatdan 30 kun ishlaydi. Sarflangan energiya qancha? 1 kW·soat narxi shartli 800 so‘m bo‘lsa, to‘lov qancha?","E = 1,5·4·30 = <b>180 kW·soat</b>.<br>To‘lov: 180·800 = <b>144 000 so‘m</b>."],
+["h","Quvvati 2 kW li elektr choynakda 1,5 kg suv 20 °C dan 100 °C gacha isitiladi. Choynakning FIK 80 %, suvning solishtirma issiqlik sig‘imi 4200 J/(kg·°C). Suv qancha vaqtda qaynaydi?","Suvga kerakli issiqlik: Q = c·m·Δt = 4200·1,5·80 = 504 000 J.<br>Foydali quvvat: 0,8·2000 = 1600 W.<br>t = Q/P<sub>foyd</sub> = 504 000/1600 = <b>315 s ≈ 5,3 min</b>."]
+]},
+{id:"chsb4",nav:"4-CHSB",kind:"CHSB",title:"4-CHSB. IV chorak",scope:"46–60-§: vakuumda va gazlarda elektr toki, razryadlar, magnit maydon, Yerning magnit maydoni, tokning magnit maydoni, Amper va Lorens kuchlari, elektromagnitlar, elektr dvigatel",time:"45 daqiqa",pt:CHSB_PT,tasks:[
+["t","Vakuumli diodning asosiy xususiyati nima?",["Tokni ikkala yo‘nalishda ham o‘tkazadi","Tokni asosan bir yo‘nalishda o‘tkazadi","Tokni umuman o‘tkazmaydi","Kuchlanishni oshiradi"],1],
+["t","Gazlar elektr tokini o‘tkazishi uchun nima zarur?",["Gazni sovutish","Gazni ionlashtirish","Gazni siqish","Gazni namlash"],1],
+["t","Payvandlashda qaysi razryad turidan foydalaniladi?",["Tojli","Yaltiroq","Yoysimon","Uchqunli"],2],
+["t","Doimiy magnitning bir xil nomli qutblari bir-biriga qanday ta’sir qiladi?",["Tortadi","Itaradi","Ta’sir qilmaydi","Faqat tebranadi"],1],
+["t","Ersted tajribasi nimani ko‘rsatdi?",["Magnit tok hosil qiladi","Tokli o‘tkazgich atrofida magnit maydon mavjud","Tok kuchi qarshilikka bog‘liq","Magnit qutblari ajraladi"],1],
+["t","To‘g‘ri tokning magnit maydon chiziqlari yo‘nalishi qaysi qoida bilan aniqlanadi?",["Arximed qoidasi","Parma (o‘ng qo‘l) qoidasi","Om qoidasi","Lens qoidasi"],1],
+["t","Elektromagnit relening vazifasi nima?",["Kuchlanishni o‘lchash","Kichik tok yordamida katta tokli zanjirni boshqarish","Zaryadni saqlash","Qarshilikni o‘lchash"],1],
+["t","Elektr dvigatelning ishlash asosida qanday hodisa yotadi?",["Magnit maydonning tokli ramkaga ta’siri","Yorug‘likning qaytishi","Elektroliz","Termoelektron emissiya"],0],
+["s","Yerning magnit maydoni haqida nimalarni bilasiz? Kompas qanday ishlaydi?","Yer katta magnitdek: magnit qutblari geografik qutblarga yaqin, lekin ular bilan mos tushmaydi. Kompas strelkasi (kichik magnit) Yer magnit maydonida joylashib, o‘zining shimoliy uchi bilan geografik shimolga ishora qiladi. Yerning magnit maydoni Quyoshdan kelayotgan zaryadli zarralardan himoya qiladi."],
+["s","Elektromagnit qanday tuziladi va uning kuchini oshirish usullarini ayting.","Temir o‘zak (yadro) ustiga izolyatsiyalangan sim o‘raladi, simdan tok o‘tganda o‘zak magnitlanadi. Kuchini oshirish: o‘ramlar sonini ko‘paytirish, tok kuchini oshirish, o‘zak qo‘yish (yoki kattaroq o‘zak ishlatish)."],
+["c","Induksiyasi 0,5 T bo‘lgan bir jinsli magnit maydonga tik joylashgan, uzunligi 0,2 m li o‘tkazgichdan 10 A tok o‘tmoqda. Amper kuchini toping.","F = B·I·l = 0,5·10·0,2 = <b>1 N</b>."],
+["c","Proton induksiyasi 0,1 T bo‘lgan maydonga tik yo‘nalishda 3·10⁵ m/s tezlik bilan uchmoqda. Lorens kuchini toping. (q = 1,6·10⁻¹⁹ C)","F = q·v·B = 1,6·10⁻¹⁹·3·10⁵·0,1 = <b>4,8·10⁻¹⁵ N</b>."],
+["h","Elektron induksiyasi 1 mT bo‘lgan bir jinsli magnit maydonga maydon chiziqlariga tik ravishda 4·10⁶ m/s tezlik bilan uchib kirdi. Elektronga ta’sir qiluvchi kuchni va uning aylana bo‘ylab harakat radiusini toping. (m = 9,1·10⁻³¹ kg, e = 1,6·10⁻¹⁹ C)","Lorens kuchi: F = e·v·B = 1,6·10⁻¹⁹·4·10⁶·10⁻³ = <b>6,4·10⁻¹⁶ N</b>.<br>Bu kuch markazga intilma kuch vazifasini bajaradi: e·v·B = m·v²/r, bundan r = m·v/(e·B) = 9,1·10⁻³¹·4·10⁶ / (1,6·10⁻¹⁹·10⁻³) ≈ <b>0,023 m ≈ 2,3 cm</b>."]
+]}
+];
+
+var groupTitle={t:"Test topshiriqlari",s:"Qisqa javobli savollar",c:"Masalalar",h:"Murakkab masala"};
+var nav=document.getElementById("nav"), sheet=document.getElementById("sheet");
+D.forEach(function(a,i){
+  var b=document.createElement("button");
+  b.textContent=a.nav; b.dataset.id=a.id;
+  if(i===5)b.className="sep";
+  b.onclick=function(){location.hash=a.id};
+  nav.appendChild(b);
+});
+
+function render(){
+  var id=(location.hash||"#bsb1").slice(1);
+  var a=D.filter(function(x){return x.id===id})[0]||D[0];
+  Array.prototype.forEach.call(nav.children,function(b){b.setAttribute("aria-current",b.dataset.id===a.id)});
+  var total=0,n=0,html="";
+  var order=["t","s","c","h"], roman={t:"I",s:"II",c:"III",h:"IV"};
+  html+='<div class="fields"><span>Maktab: ____-sonli umumta’lim maktabi</span><span>Sinf: 8-___</span><span>Sana: ____________</span><span class="w">O‘quvchining F.I.Sh.: </span></div>';
+  html+='<h1>'+a.title+'</h1>';
+  html+='<div class="meta"><span>Fan: <b>Fizika, 8-sinf</b></span><span>Vaqt: <b>'+a.time+'</b></span><span>Jami: <b id="tot"></b></span></div>';
+  html+='<div class="scope"><b>Qamrov:</b> '+a.scope+'.</div>';
+  order.forEach(function(k){
+    var items=a.tasks.filter(function(t){return t[0]===k});
+    if(!items.length)return;
+    var p=a.pt[k], sub=items.length*p; total+=sub;
+    html+='<h2>'+roman[k]+'. '+groupTitle[k]+' <span>har biri '+p+' ball · '+sub+' ball</span></h2>';
+    items.forEach(function(t){
+      n++;
+      html+='<div class="task"><div class="num">'+n+'.</div><div><p class="q">'+t[1]+'</p>';
+      if(k==="t"){
+        html+='<ul class="opts">'+t[2].map(function(o,j){return '<li><b>'+L[j]+')</b> '+o+'</li>'}).join("")+'</ul>';
+        html+='<div class="ans"><b>Javob: '+L[t[3]]+') '+t[2][t[3]]+'</b></div>';
+      }else{
+        html+='<div class="space"></div><div class="ans"><b>Javob:</b> '+t[2]+'</div>';
+      }
+      html+='</div></div>';
+    });
+  });
+  html+='<div class="foot"><span>Olingan ball: ______ / '+total+'</span><span>O‘qituvchi imzosi: ____________</span></div>';
+  sheet.innerHTML=html;
+  document.getElementById("tot").textContent=total+" ball";
+  document.title=a.title+" · 8-sinf Fizika";
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",render);
+render();
+var kb=document.getElementById("keyBtn");
+kb.onclick=function(){var on=document.body.classList.toggle("key");kb.setAttribute("aria-pressed",on);kb.textContent=on?"Javoblarni yashirish":"Javoblar kaliti"};
+document.getElementById("printBtn").onclick=function(){window.print()};
+</script>
+</body>
+</html>
